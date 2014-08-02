@@ -36,33 +36,30 @@ class SpeedSort:
 		return self.join(listLeft, listRight)
 
 	def sortAndFindIndex(self, target):
-		return self.list, self.findTarget(0, len(self.list), target)
+		self.tempList = self.sort()
+		return self.tempList, self.findTarget(0, len(self.list), target)
 
-	def findTarget(self, leftIndex, rightIndex, target, list= None):
-		if list == None:
-			list = self.list
+	def findTarget(self, leftIndex, rightIndex, target):
 		midPoint = (rightIndex + leftIndex)/2
-		if list[midPoint] == target:
+		if rightIndex - leftIndex == 2:
+			if self.tempList[midPoint] == target:
+				return midPoint
+			elif self.tempList[midPoint + 1] == target:
+				return midPoint + 1
+			else:
+				return -1
+		elif target > self.tempList[midPoint]:
+			return self.findTarget(midPoint, rightIndex, target)
+		elif target < self.tempList[midPoint]:
+			return self.findTarget(leftIndex, midPoint, target)
+		else:
 			return midPoint
-		elif len(list) == 1:
-			return -1
-		elif list[midPoint] > target:
-			return self.findTarget(midPoint, rightIndex, target, list)
-		elif list[midPoint] < target:
-			return self.findTarget(leftIndex, midPoint, target, list)
 
 	def contains(self, target, list= None):
 		if list == None:
 			list = self.list
-		sortedList = self.sort(list)
+		self.tempList = self.sort(list)
 		return self.findTarget(0, len(list), target) > -1
 
 	def __str__(self):
 		return str(self.list)
-
-list = [1,9,2,7,4,10]
-speedSort = SpeedSort(list, False)
-print speedSort
-print speedSort.sort()
-print speedSort.sortAndFindIndex(9)
-
