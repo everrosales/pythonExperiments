@@ -54,5 +54,10 @@ class MatrixTests(unittest.TestCase):
 	def testDet(self):
 		self.assertEqual(-6.99999, self.matrix3by3.determinant())
 
+	def testRref(self):
+		testMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+		self.assertEqual(testMatrix, self.matrix3by3.rref().matrix)
+
+
 if __name__ == '__main__':
 	unittest.main()

@@ -102,6 +102,25 @@ class Matrix:
  			dividedRow.append(newValue)
  		return dividedRow
 
+ 	def normalizeRow(self, index, matrix):
+ 		targetRow = matrix[index]
+ 		newRow = []
+ 		if targetRow[index] == 0:
+ 			return targetRow
+ 		for item in targetRow:
+ 			newValue = float(item) / targetRow[index]
+ 			newRow.append(newValue)
+ 		return newRow
+
+ 	def rref(self, storeRref= False):
+ 		newMatrix = self.matrix[:]
+ 		for rowIndex in range(len(newMatrix)):
+ 			newMatrix[rowIndex] = self.normalizeRow(rowIndex, newMatrix)
+ 			newMatrix = self.reduceRowDown(rowIndex, newMatrix)
+ 		for rowIndex in range(len(newMatrix) - 1, -1, -1):
+ 			newMatrix = self.reduceRowUp(rowIndex, newMatrix)
+ 		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
+
  	def determinant(self):
  		if self.columns == self.rows:
  			upperTri = self.upperTriangular()
@@ -109,7 +128,6 @@ class Matrix:
  			for index in range(self.rows):
  				det *= upperTri.matrix[index][index]
  			return det
-
  		else:
  			return "Matrix is not square. "
 
