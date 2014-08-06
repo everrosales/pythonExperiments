@@ -33,14 +33,23 @@ class MatrixTests(unittest.TestCase):
 		testMatrix[5][1] = 0
 		self.assertEqual(testMatrix, self.matrix.matrix)
 
-	def testReduceRow(self):
-		newMatrix = self.matrix3by3.reduceRow(0, self.matrix3by3.matrix)
+	def testReduceRowDown(self):
+		newMatrix = self.matrix3by3.reduceRowDown(0, self.matrix3by3.matrix)
 		testMatrix = [[1, 2, 3], [0, 3, -2], [0, -2, -1]]
+		self.assertEqual(testMatrix, newMatrix)
+
+	def testReduceRowUp(self):
+		newMatrix = self.matrix3by3.reduceRowUp(2, self.matrix3by3.matrix)
+		testMatrix = [[-0.5, 2, 0], [0.5, 5, 0], [1, 0, 2]]
 		self.assertEqual(testMatrix, newMatrix)
 
 	def testUpperTriangular(self):
 		testMatrix = [[1, 2, 3], [0, 3, -2], [0, 0, -2.33333]]
 		self.assertEqual(testMatrix, self.matrix3by3.upperTriangular().matrix)
+
+	def testLowerTriangular(self):
+		testMatrix = [[-0.7, 0, 0], [0.5, 5, 0], [1, 0, 2]]
+		self.assertEqual(testMatrix, self.matrix3by3.lowerTriangular().matrix)
 	
 	def testDet(self):
 		self.assertEqual(-6.99999, self.matrix3by3.determinant())

@@ -46,23 +46,51 @@ class Matrix:
  		else:
  			print "Column size does not fit the dimensions of the Matrix. "
 
+ 	def lowerTriangular(self, storeLowerTri= False):
+ 		index = self.rows - 1
+ 		newMatrix = self.matrix[:]
+ 		while index > -1:
+ 			newMatrix = self.reduceRowUp(index, newMatrix)
+ 			index -= 1
+ 		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
+
  	def upperTriangular(self, storeUpperTri= False):
  		index = 0
  		newMatrix = self.matrix[:]
  		while index < self.columns:
- 			newMatrix = self.reduceRow(index, newMatrix)
+ 			newMatrix = self.reduceRowDown(index, newMatrix)
  			index += 1
  		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
 
- 	def reduceRow(self, pivotRowIndex, currentMatrix):
- 		for index in range(pivotRowIndex + 1, self.rows):
- 			currentMatrix[index] = self.divideRow(pivotRowIndex, index, currentMatrix)
+ 	def reduceRowUp(self, pivotRowIndex, currentMatrix):
+ 		for index in range(pivotRowIndex - 1, -1, -1):
+ 			currentMatrix[index] = self.divideRowUp(pivotRowIndex, index, currentMatrix)
  		return currentMatrix
 
- 	def divideRow(self, pivotRowIndex, targetRowIndex, matrix):
+ 	def reduceRowDown(self, pivotRowIndex, currentMatrix):
+ 		for index in range(pivotRowIndex + 1, self.rows):
+ 			currentMatrix[index] = self.divideRowDown(pivotRowIndex, index, currentMatrix)
+ 		return currentMatrix
+
+ 	def divideRowUp(self, pivotRowIndex, targetRowIndex, matrix):
  		pivotRow = matrix[pivotRowIndex]
  		targetRow = matrix[targetRowIndex]
- 		if targetRow[pivotRowIndex] != 0:
+ 		if pivotRow[pivotRowIndex] != 0:
+ 			diff = float(targetRow[pivotRowIndex])/float(pivotRow[pivotRowIndex])
+ 		else:
+ 			return targetRow
+ 		dividedRow = []
+ 		for itemIndex in range(len(targetRow) - 1, -1, -1):
+ 			newValue = round(((targetRow[itemIndex]) + pivotRow[itemIndex]*(-diff)), 5)
+ 			if newValue.is_integer():
+ 				newValue = int(newValue)
+ 			dividedRow = [newValue] + dividedRow
+ 		return dividedRow
+
+ 	def divideRowDown(self, pivotRowIndex, targetRowIndex, matrix):
+ 		pivotRow = matrix[pivotRowIndex]
+ 		targetRow = matrix[targetRowIndex]
+ 		if pivotRow[pivotRowIndex] != 0:
  			diff = float(targetRow[pivotRowIndex])/float(pivotRow[pivotRowIndex])
  		else:
  			return targetRow
