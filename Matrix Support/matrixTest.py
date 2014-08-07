@@ -57,7 +57,25 @@ class MatrixTests(unittest.TestCase):
 	def testRref(self):
 		testMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 		self.assertEqual(testMatrix, self.matrix3by3.rref().matrix)
+		newMatrix3by4 = Matrix(3,4)
+		newMatrix3by4.setRow(0, [1,2,1,2])
+		newMatrix3by4.setRow(1, [2,1,1,2])
+		newMatrix3by4.setRow(2, [3,2,3,2])
+		testMatrix = [[1, 0, 0, 1], [0, 1, 0, 1], [0, 0, 1 ,-1]]
+		self.assertEqual(testMatrix, newMatrix3by4.rref(newMatrix3by4.matrix).matrix)
+		newMatrix4by3 = Matrix(4,3)
+		newMatrix4by3.setColumn(0, [1,2,1,2])
+		newMatrix4by3.setColumn(1, [2,1,1,2])
+		newMatrix4by3.setColumn(2, [3,2,3,2])
+		testMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]]
+		self.assertEqual(testMatrix, newMatrix4by3.rref(newMatrix4by3.matrix).matrix)
 
+	def testMul(self):
+		identityMatrix = Matrix(3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+		self.assertEqual(self.matrix3by3.matrix, (self.matrix3by3 * identityMatrix).matrix)
+		testMatrix = Matrix(3, 3, [[1, 1, 1], [0, 1, 0], [0, 0, 1]])
+		testGoal = [[1, 3, 4], [1, 6, 2], [1, 1, 3]]
+		self.assertEqual(testGoal, (self.matrix3by3 * testMatrix).matrix)
 
 if __name__ == '__main__':
 	unittest.main()

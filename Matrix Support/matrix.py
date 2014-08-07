@@ -46,6 +46,15 @@ class Matrix:
  		else:
  			print "Column size does not fit the dimensions of the Matrix. "
 
+ 	def getRow(self, rowIndex):
+ 		return self.matrix[rowIndex]
+
+ 	def getColumn(self, columnIndex):
+ 		newColumn = []
+ 		for row in self.matrix:
+ 			newColumn.append(row[columnIndex])
+ 		return newColumn
+
  	def lowerTriangular(self, storeLowerTri= False):
  		index = self.rows - 1
  		newMatrix = self.matrix[:]
@@ -114,10 +123,10 @@ class Matrix:
 
  	def rref(self, storeRref= False):
  		newMatrix = self.matrix[:]
- 		for rowIndex in range(len(newMatrix)):
+ 		for rowIndex in range(min(len(newMatrix), len(newMatrix[0]))):
  			newMatrix[rowIndex] = self.normalizeRow(rowIndex, newMatrix)
  			newMatrix = self.reduceRowDown(rowIndex, newMatrix)
- 		for rowIndex in range(len(newMatrix) - 1, -1, -1):
+ 		for rowIndex in range(min(len(newMatrix), len(newMatrix[0])) - 1, -1, -1):
  			newMatrix = self.reduceRowUp(rowIndex, newMatrix)
  		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
 
@@ -137,3 +146,22 @@ class Matrix:
  			row = [str(x) for x in row]
  			string += ' '.join(row) + '\n'
  		return string
+
+ 	def __mul__(self, otherMatrix):
+ 		if self.columns != otherMatrix.rows:
+ 			return "These matrices can not be multiplied"
+ 		else:
+ 			newMatrix = []
+ 			for rowIndex in range(self.rows):
+ 				newRow = []
+ 				targetRow = self.matrix[rowIndex]
+ 				for columnIndex in range(otherMatrix.columns):
+ 					targetColumn = otherMatrix.getColumn(columnIndex)
+ 					newValue = 0
+ 					for itemIndex in range(otherMatrix.rows):
+ 						newValue += targetRow[itemIndex] * targetColumn[itemIndex]
+ 					newRow.append(newValue)
+ 				newMatrix.append(newRow)
+ 			return Matrix(self.rows, otherMatrix.columns, newMatrix)
+
+
