@@ -77,5 +77,14 @@ class MatrixTests(unittest.TestCase):
 		testGoal = [[1, 3, 4], [1, 6, 2], [1, 1, 3]]
 		self.assertEqual(testGoal, (self.matrix3by3 * testMatrix).matrix)
 
+	def testAdd(self):
+		testGoal = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+		newMatrix = [[0, -1, -2], [1, -3, 1], [2, 3, 1]]
+		addedMatrix = Matrix(3, 3, newMatrix)
+		self.assertEqual(testGoal, (self.matrix3by3 + addedMatrix).matrix)
+		error = "These Matrices can not be added."
+		self.assertEqual(error, (self.matrix + addedMatrix))
+
+
 if __name__ == '__main__':
 	unittest.main()

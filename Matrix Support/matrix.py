@@ -164,4 +164,18 @@ class Matrix:
  				newMatrix.append(newRow)
  			return Matrix(self.rows, otherMatrix.columns, newMatrix)
 
+ 	def __add__(self, otherMatrix):
+ 		if self.rows != otherMatrix.rows or self.columns != otherMatrix.columns:
+ 			return "These Matrices can not be added."
+ 		else:
+ 			newMatrix = []
+ 			for rowIndex in range(self.rows):
+ 				newRow = []
+ 				leftRow = self.matrix[rowIndex]
+ 				rightRow = otherMatrix.matrix[rowIndex]
+ 				for itemIndex in range(self.columns):
+ 					newValue = leftRow[itemIndex] + rightRow[itemIndex]
+ 					newRow.append(newValue)
+ 				newMatrix.append(newRow)
+ 			return Matrix(self.rows, self.columns, newMatrix)
 
