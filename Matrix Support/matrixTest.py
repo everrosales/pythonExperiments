@@ -1,5 +1,5 @@
 import unittest
-from matrix import Matrix
+from matrix import *
 
 class MatrixTests(unittest.TestCase):
 	def setUp(self):
@@ -84,6 +84,15 @@ class MatrixTests(unittest.TestCase):
 		self.assertEqual(testGoal, (self.matrix3by3 + addedMatrix).matrix)
 		error = "These Matrices can not be added."
 		self.assertEqual(error, (self.matrix + addedMatrix))
+
+	def testTranspose(self):
+		targetGoal = [[1, 1, 1], [2, 5, 0], [3, 1, 2]]
+		self.assertEqual(targetGoal, self.matrix3by3.transpose().matrix)
+
+	def testIdentity(self):
+		identity = Identity(3, 3)
+		targetGoal = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+		self.assertEqual(targetGoal, identity.matrix)
 
 
 if __name__ == '__main__':

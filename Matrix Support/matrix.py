@@ -140,6 +140,13 @@ class Matrix:
  		else:
  			return "Matrix is not square. "
 
+ 	def transpose(self):
+ 		newMatrix = Matrix(self.rows, self.columns)
+ 		for rowIndex in range(len(self.matrix)):
+ 			for columnIndex in range(len(self.matrix[0])):
+ 				newMatrix.setItem(columnIndex, rowIndex, self.matrix[rowIndex][columnIndex])
+ 		return newMatrix
+
  	def __str__(self):
  		string = ''
  		for row in self.matrix:
@@ -179,3 +186,10 @@ class Matrix:
  				newMatrix.append(newRow)
  			return Matrix(self.rows, self.columns, newMatrix)
 
+class Identity(Matrix):
+	def __init__(self, rows,  columns):
+		self.rows = rows
+		self.columns = columns
+		self.matrix = [[0 for x in range(columns)] for y in range(rows)]
+		for index in range(min(rows, columns)):
+			self.setItem(index, index, 1)
