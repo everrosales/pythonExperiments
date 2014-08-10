@@ -57,29 +57,29 @@ class Matrix:
 
  	def lowerTriangular(self, storeLowerTri= False):
  		index = self.rows - 1
- 		newMatrix = self.matrix[:]
+ 		newMatrix = Matrix(self.rows, self.columns, self.matrix[:])
  		while index > -1:
- 			newMatrix = self.reduceRowUp(index, newMatrix)
+ 			newMatrix.matrix = self.reduceRowUp(index, newMatrix)
  			index -= 1
- 		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
+ 		return newMatrix
 
  	def upperTriangular(self, storeUpperTri= False):
  		index = 0
- 		newMatrix = self.matrix[:]
+ 		newMatrix = Matrix(self.rows, self.columns, self.matrix[:])
  		while index < self.columns:
- 			newMatrix = self.reduceRowDown(index, newMatrix)
+ 			newMatrix.matrix = self.reduceRowDown(index, newMatrix)
  			index += 1
- 		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
+ 		return newMatrix
 
  	def reduceRowUp(self, pivotRowIndex, currentMatrix):
  		for index in range(pivotRowIndex - 1, -1, -1):
- 			currentMatrix[index] = self.divideRowUp(pivotRowIndex, index, currentMatrix)
- 		return currentMatrix
+ 			currentMatrix.setRow(index, self.divideRowUp(pivotRowIndex, index, currentMatrix.matrix))
+ 		return currentMatrix.matrix
 
  	def reduceRowDown(self, pivotRowIndex, currentMatrix):
  		for index in range(pivotRowIndex + 1, self.rows):
- 			currentMatrix[index] = self.divideRowDown(pivotRowIndex, index, currentMatrix)
- 		return currentMatrix
+ 			currentMatrix.setRow(index, self.divideRowDown(pivotRowIndex, index, currentMatrix.matrix))
+ 		return currentMatrix.matrix
 
  	def divideRowUp(self, pivotRowIndex, targetRowIndex, matrix):
  		pivotRow = matrix[pivotRowIndex]
@@ -112,7 +112,7 @@ class Matrix:
  		return dividedRow
 
  	def normalizeRow(self, index, matrix):
- 		targetRow = matrix[index]
+ 		targetRow = matrix.getRow(index)
  		newRow = []
  		if targetRow[index] == 0:
  			return targetRow
@@ -121,14 +121,24 @@ class Matrix:
  			newRow.append(newValue)
  		return newRow
 
+ 	def normalizeColumn(self, index, matrix):
+ 		targetColumn = matrix.getColumn(index)
+ 		newColumn= []
+ 		if targetColumn[index] == 0:
+ 			return targetColumn
+ 		for item in targetColumn:
+ 			newValue = float(item) / targetColumn[index]
+ 			newColumn.append(newValue)
+ 		return newColumn
+
  	def rref(self, storeRref= False):
- 		newMatrix = self.matrix[:]
- 		for rowIndex in range(min(len(newMatrix), len(newMatrix[0]))):
- 			newMatrix[rowIndex] = self.normalizeRow(rowIndex, newMatrix)
- 			newMatrix = self.reduceRowDown(rowIndex, newMatrix)
- 		for rowIndex in range(min(len(newMatrix), len(newMatrix[0])) - 1, -1, -1):
- 			newMatrix = self.reduceRowUp(rowIndex, newMatrix)
- 		return Matrix(len(newMatrix), len(newMatrix[0]), newMatrix)
+ 		newMatrix = Matrix(self.rows, self.columns, self.matrix[:])
+ 		for rowIndex in range(min(newMatrix.rows, newMatrix.columns)):
+ 			newMatrix.setRow(rowIndex, self.normalizeRow(rowIndex, newMatrix))
+ 			newMatrix.matrix = self.reduceRowDown(rowIndex, newMatrix)
+ 		for rowIndex in range(min(newMatrix.rows, newMatrix.columns) - 1, -1, -1):
+ 			newMatrix.matrix = self.reduceRowUp(rowIndex, newMatrix)
+ 		return newMatrix
 
  	def determinant(self):
  		if self.columns == self.rows:

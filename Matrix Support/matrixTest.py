@@ -34,12 +34,12 @@ class MatrixTests(unittest.TestCase):
 		self.assertEqual(testMatrix, self.matrix.matrix)
 
 	def testReduceRowDown(self):
-		newMatrix = self.matrix3by3.reduceRowDown(0, self.matrix3by3.matrix)
+		newMatrix = self.matrix3by3.reduceRowDown(0, self.matrix3by3)
 		testMatrix = [[1, 2, 3], [0, 3, -2], [0, -2, -1]]
 		self.assertEqual(testMatrix, newMatrix)
 
 	def testReduceRowUp(self):
-		newMatrix = self.matrix3by3.reduceRowUp(2, self.matrix3by3.matrix)
+		newMatrix = self.matrix3by3.reduceRowUp(2, self.matrix3by3)
 		testMatrix = [[-0.5, 2, 0], [0.5, 5, 0], [1, 0, 2]]
 		self.assertEqual(testMatrix, newMatrix)
 
@@ -51,8 +51,13 @@ class MatrixTests(unittest.TestCase):
 		testMatrix = [[-0.7, 0, 0], [0.5, 5, 0], [1, 0, 2]]
 		self.assertEqual(testMatrix, self.matrix3by3.lowerTriangular().matrix)
 	
-	def testDet(self):
-		self.assertEqual(-6.99999, self.matrix3by3.determinant())
+	def testNormalizeRow(self):
+		targetGoal = [0.2, 1, 0.2]
+		self.assertEqual(targetGoal, self.matrix3by3.normalizeRow(1, self.matrix3by3))
+
+	def testNormalizeColumn(self):
+		targetGoal = [0.4, 1, 0]
+		self.assertEqual(targetGoal, self.matrix3by3.normalizeColumn(1, self.matrix3by3))
 
 	def testRref(self):
 		testMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -69,6 +74,9 @@ class MatrixTests(unittest.TestCase):
 		newMatrix4by3.setColumn(2, [3,2,3,2])
 		testMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]]
 		self.assertEqual(testMatrix, newMatrix4by3.rref(newMatrix4by3.matrix).matrix)
+
+	def testDet(self):
+		self.assertEqual(-6.99999, self.matrix3by3.determinant())
 
 	def testMul(self):
 		identityMatrix = Matrix(3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
