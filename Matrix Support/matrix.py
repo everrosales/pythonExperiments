@@ -1,3 +1,5 @@
+import copy
+
 class Matrix:
 	"""Class that add Matrix Support in python. """
  	def __init__(self, rows, columns, matrix= None):
@@ -131,6 +133,14 @@ class Matrix:
  			newColumn.append(newValue)
  		return newColumn
 
+ 	def normalize(self, vector):
+ 		newVector = []
+ 		targetVectorItems = vector.getColumn(0)
+ 		total = sum([item**2 for item in targetVectorItems])**.5
+ 		for item in targetVectorItems:
+ 			newVector.append(float(item)/total)
+ 		return Vector(vector.rows, newVector)
+
  	def rref(self, storeRref= False):
  		newMatrix = Matrix(self.rows, self.columns, self.matrix[:])
  		for rowIndex in range(min(newMatrix.rows, newMatrix.columns)):
@@ -151,10 +161,28 @@ class Matrix:
  			return "Matrix is not square. "
 
  	def transpose(self):
- 		newMatrix = Matrix(self.rows, self.columns)
+ 		newMatrix = Matrix(self.columns, self.rows)
  		for rowIndex in range(len(self.matrix)):
  			for columnIndex in range(len(self.matrix[0])):
  				newMatrix.setItem(columnIndex, rowIndex, self.matrix[rowIndex][columnIndex])
+ 		return newMatrix
+
+ 	def projection(self, vectorOne, vectorTwo):
+ 		aTranspose = vectorOne.transpose()
+ 		top = ((aTranspose * vectorTwo))
+ 		bottom = ((aTranspose*vectorOne))
+ 		return Vector(1, [float(top.matrix[0][0])/bottom.matrix[0][0]]) * vectorOne
+
+ 	def orthogonal(self):
+ 		newMatrix = Matrix(self.rows, self.columns)
+ 		for index in range(self.columns):
+ 			projectionVector = Vector(self.rows, self.getColumn(index))
+ 			for projectionIndex in range(index):
+				targetVector = Vector(self.rows, self.getColumn(projectionIndex))
+				newProjectionVector = copy.copy(projectionVector)
+ 				newProjectionVector = newProjectionVector - self.projection(targetVector, projectionVector)
+ 			newProjectionVector = self.normalize(projectionVector)
+ 			newMatrix.setColumn(index, newProjectionVector.getColumn(0))
  		return newMatrix
 
  	def __str__(self):
@@ -165,7 +193,16 @@ class Matrix:
  		return string
 
  	def __mul__(self, otherMatrix):
- 		if self.columns != otherMatrix.rows:
+ 		if (self.rows == self.columns == 1):
+ 			integer = self.matrix[0][0]
+ 			newMatrix = []
+ 			for rowIndex in range(otherMatrix.rows):
+ 				newRow = []
+ 				for columnIndex in range(otherMatrix.columns):
+ 					newRow.append((otherMatrix.matrix[rowIndex][columnIndex])*integer)
+ 				newMatrix.append(newRow)
+ 			return Matrix(otherMatrix.rows, otherMatrix.columns, otherMatrix)
+ 		elif self.columns != otherMatrix.rows:
  			return "These matrices can not be multiplied"
  		else:
  			newMatrix = []
@@ -180,6 +217,19 @@ class Matrix:
  					newRow.append(newValue)
  				newMatrix.append(newRow)
  			return Matrix(self.rows, otherMatrix.columns, newMatrix)
+
+ 	def __div__(self, otherMatrix):
+ 		if self.rows == self.columns == 1:
+ 			integer = self.matrix[0][0]
+ 			newMatrix = []
+ 			for rowIndex in range(otherMatrix.rows):
+ 				newRow = []
+ 				for columnIndex in range(otherMatrix.columns):
+ 					newRow.append((otherMatrix.matrix[rowIndex][columnIndex])/integer)
+ 				newMatrix.append(newRow)
+ 			return Matrix(otherMatrix.rows, otherMatrix.columns, otherMatrix)
+ 		return "Matrix division is currently not supported"
+
 
  	def __add__(self, otherMatrix):
  		if self.rows != otherMatrix.rows or self.columns != otherMatrix.columns:
@@ -196,6 +246,21 @@ class Matrix:
  				newMatrix.append(newRow)
  			return Matrix(self.rows, self.columns, newMatrix)
 
+ 	def __sub__(self, otherMatrix):
+ 		if self.rows != otherMatrix.rows or self.columns != otherMatrix.columns:
+ 			return "These Matrices can not be subtracted"
+ 		else:
+ 			newMatrix = []
+ 			for rowIndex in range(self.rows):
+ 				newRow = []
+ 				leftRow = self.matrix[rowIndex]
+ 				rightRow = otherMatrix.matrix[rowIndex]
+ 				for itemIndex in range(self.columns):
+ 					newValue = leftRow[itemIndex] - rightRow[itemIndex]
+ 					newRow.append(newValue)
+ 				newMatrix.append(newRow)
+ 			return Matrix(self.rows, self.columns, newMatrix)
+
 class Identity(Matrix):
 	def __init__(self, rows,  columns):
 		self.rows = rows
@@ -203,3 +268,12 @@ class Identity(Matrix):
 		self.matrix = [[0 for x in range(columns)] for y in range(rows)]
 		for index in range(min(rows, columns)):
 			self.setItem(index, index, 1)
+
+class Vector(Matrix):
+	def __init__(self, rows, vector):
+		self.rows = rows
+		self.columns = 1
+		self.matrix = [[item] for item in vector]
+
+	def __getitem__(self,index):
+		return self.matrix[index]

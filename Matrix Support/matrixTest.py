@@ -102,6 +102,10 @@ class MatrixTests(unittest.TestCase):
 		targetGoal = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 		self.assertEqual(targetGoal, identity.matrix)
 
+	def testOrthogonal(self):
+		print self.matrix3by3
+		print self.matrix3by3.orthogonal()
+
 
 if __name__ == '__main__':
 	unittest.main()
